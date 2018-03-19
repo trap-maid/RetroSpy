@@ -25,17 +25,9 @@
 // Uncomment this for MODE_SEGA, MODE_CLASSIC and MODE_BOOSTER_GRIP serial debugging output
 //#define SEGADEBUG
 
-#include <SegaControllerSpy.h>
-#include <ClassicController.h>
-#include <BoosterGrip.h>#
-#ifdef MODE_KEYBOARD_CONTROLLER
-#include <KeyboardController.h>
-#endif
-
 SegaControllerSpy segaController;
 word currentState = 0;
-word lastState = 0;
-
+word lastState = -1;
 
 // Specify the Arduino pins that are connected to
 // DB9 Pin 1, DB9 Pin 2, DB9 Pin 3, DB9 Pin 4, DB9 Pin 5, DB9 Pin 6, DB9 Pin 9
@@ -45,9 +37,7 @@ ClassicController classicController(2, 3, 4, 5, 7, 8);
 // DB9 Pin 1, DB9 Pin 2, DB9 Pin 3, DB9 Pin 4, DB9 Pin 5, DB9 Pin 6, DB9 Pin 9
 BoosterGrip boosterGrip(2, 3, 4, 5, 6, 7, 8);
 
-#ifdef MODE_KEYBOARD_CONTROLLER
-KeyboardController keyboardController;
-#endif
+KeyboardControllerSpy keyboardController;
 
 #define PIN_READ( pin )  (PIND&(1<<(pin)))
 #define PINC_READ( pin ) (PINC&(1<<(pin)))
@@ -341,13 +331,11 @@ inline void loop_BoosterGrip()
   sendRawSegaData();
 }
 
-#ifdef MODE_KEYBOARD_CONTROLLER
 inline void loop_KeyboardController()
 {
   currentState = keyboardController.getState();
   sendRawSegaData();
 }
-#endif 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Arduino sketch main loop definition.

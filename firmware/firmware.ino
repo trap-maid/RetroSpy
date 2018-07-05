@@ -17,7 +17,7 @@
 //#define MODE_PLAYSTATION
 //#define MODE_TG16
 //Bridge one of the analog GND to the right analog IN to enable your selected mode
-//#define MODE_DETECT
+#define MODE_DETECT
 // ---------------------------------------------------------------------------------
 // The only reason you'd want to use 2-wire SNES mode is if you built a NintendoSpy
 // before the 3-wire firmware was implemented.  This mode is for backwards
@@ -54,9 +54,17 @@ KeyboardController keyboardController;
 #define WAIT_FALLING_EDGE( pin ) while( !PIN_READ(pin) ); while( PIN_READ(pin) );
 #define WAIT_LEADING_EDGE( pin ) while( PIN_READ(pin) ); while( !PIN_READ(pin) );
 
-#define MODEPIN_SNES 0
-#define MODEPIN_N64  1
-#define MODEPIN_GC   2
+#define MODEPIN_SHIFT       5
+#define MODEPIN_NES         0
+#define MODEPIN_SNES        1
+#define MODEPIN_N64         2
+#define MODEPIN_GC          3
+#define MODEPIN_SGB         4
+#define MODEPIN_Sega        0
+#define MODEPIN_Classic     1
+#define MODEPIN_Playstation 2
+#define MODEPIN_TG16        3
+#define MODEPIN_BoosterGrip 4
 
 #define N64_PIN        2
 #define N64_PREFIX     9
@@ -519,14 +527,30 @@ void loop()
 #elif defined MODE_TG16
     loop_TG16();
 #elif defined MODE_DETECT
-    if( !PINC_READ( MODEPIN_SNES ) ) {
-        loop_SNES();
-    } else if( !PINC_READ( MODEPIN_N64 ) ) {
-        loop_N64();
-    } else if( !PINC_READ( MODEPIN_GC ) ) {
-        loop_GC();
-    } else {
-        loop_NES();
-    }
+	if( PINC_READ( MODEPIN_SHIFT ) ){
+		if( !PINC_READ( MODEPIN_NES ) ) {
+			loop_NES();//NES
+		} else if( !PINC_READ( MODEPIN_SNES ) ) {
+			loop_SNES();//SNES
+		} else if( !PINC_READ( MODEPIN_N64 ) ) {
+			loop_N64();//N64
+		} else if( !PINC_READ( MODEPIN_GC ) ) {
+			loop_GC();//GCN
+		} else if( !PINC_READ( MODEPIN_SGB ) ) {
+			loop_SGB();//SGB
+		}
+	} else {
+		if( !PINC_READ( MODEPIN_Sega ) ) {
+			loop_Sega();//Genesis
+		} else if( !PINC_READ( MODEPIN_Classic ) ) {
+			loop_Classic();//Classic
+		} else if( !PINC_READ( MODEPIN_Playstation ) ) {
+			loop_Playstation();//PSX
+		} else if( !PINC_READ( MODEPIN_TG16 ) ) {
+			loop_TG16();//TG16
+		} else if( !PINC_READ( MODEPIN_BoosterGrip ) ) {
+			loop_BoosterGrip();//Boost
+		}
+	}
 #endif
 }
